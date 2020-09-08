@@ -12,14 +12,21 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.0.0",
-    "axios": "^0.18.1",
-    "quasar": "^1.0.0"
+    "@quasar/extras": "^1.9.5",
+    "firebase": "^7.19.1",
+    "quasar": "^1.13.2",
+    "vue2-google-maps": "^0.10.7",
+    "vuefire": "^2.2.1",
+    "vuelidate": "^0.7.5"
   },
   "devDependencies": {
-    "@quasar/app": "^1.0.0",
+    "@quasar/app": "^1.9.6",
+    "@quasar/quasar-app-extension-dotenv": "^1.0.5",
     "@vue/eslint-config-standard": "^4.0.0",
-    "eslint-loader": "^2.1.1"
+    "babel-eslint": "^10.1.0",
+    "eslint": "^5.16.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-vue": "^5.2.3"
   },
   "engines": {
     "node": ">= 8.9.0",
