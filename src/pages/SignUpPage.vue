@@ -4,7 +4,7 @@
       class="q-ma-md"
       style="width: 100%; max-width: 500px;">
       <q-card-section class="text-h6">
-        Sign Up
+        Sign Up For the GoBandGo Garage Sale
       </q-card-section>
 
       <q-card-section>
@@ -49,21 +49,48 @@
           label="What are you selling?"
           type="textarea" />
         <div class="q-mt-sm">
-          <q-toggle
-            v-model="user.donating"
-            label="Donate Now?" />
-        </div>
-        <div class="q-mt-sm">
-          <file-uploader
-            ref="fileUploader"
-            style="min-height: 320px;"
-            label="Add Photos"
-            :filter="checkFileType"
-            accept=".jpg, image/*"
-            bordered
-            multiple
-            hide-upload-btn
-            class="full-width" />
+          <div
+            class="text-center q-mb-sm"
+            style="font-size: 16px;">
+            Please donate so your marker is displayed.
+          </div>
+          <div
+            v-if="!user.paid"
+            ref="paypalButtons" />
+          <div
+            v-if="user.paid"
+            class="row text-positive justify-center">
+            <q-icon
+              class="q-mr-sm"
+              name="check_circle"
+              size="24px" />
+            <div style="font-size: 16px;">
+              Thank you for donating!
+            </div>
+          </div>
+          <div
+            v-if="$v.user.paid.$error"
+            class="row text-negative justify-center">
+            <q-icon
+              class="q-mr-sm"
+              name="error"
+              size="24px" />
+            <div style="font-size: 16px;">
+              Please pay so that your marker can be displayed
+            </div>
+          </div>
+          <div class="q-mt-sm">
+            <file-uploader
+              ref="fileUploader"
+              style="min-height: 320px;"
+              label="Add Photos"
+              :filter="checkFileType"
+              accept=".jpg, image/*"
+              bordered
+              multiple
+              hide-upload-btn
+              class="full-width" />
+          </div>
         </div>
       </q-card-section>
 
@@ -71,7 +98,8 @@
         align="right">
         <q-btn
           color="primary"
-          flat
+          unelevated
+          class="full-width"
           label="Sign Up"
           @click="onSignUp" />
       </q-card-actions>
@@ -82,18 +110,6 @@
           color="primary" />
       </q-inner-loading>
     </q-card>
-
-    <!-- <q-linear-progress
-      class="fixed-bottom"
-      size="20px"
-      indeterminate>
-      <div class="absolute-full flex flex-center">
-        <q-badge
-          color="accent"
-          text-color="primary"
-          label="Creating User..." />
-      </div>
-    </q-linear-progress> -->
   </q-page>
 </template>
 
@@ -116,7 +132,7 @@ export default {
         email: '',
         password: '',
         message: 'Great variety of high quality items for sale',
-        donating: true,
+        paid: false,
         photos: null,
         geopoint: null
       },
@@ -163,6 +179,7 @@ export default {
           firstName: this.user.firstName,
           lastName: this.user.lastName,
           email: this.user.email,
+          paid: this.user.paid,
           created: Timestamp.now(),
           updated: Timestamp.now()
         });
@@ -206,7 +223,7 @@ export default {
       }
 
       this.loading = false;
-      this.$q.notify({message: 'Successfully signed up', color: 'positive'});
+      this.$q.notify({message: 'Successfully signed up', color: 'positive', icon: 'check_circle'});
       this.$router.push({path: '/edit'});
     },
     async geocode(address) {
@@ -264,6 +281,28 @@ export default {
   },
   async mounted() {
     await this.$gmapApiPromiseLazy();
+    this.$paypal.Buttons({
+      createOrder: (data, actions) => {
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              currency_code: 'USD',
+              value: '10.00'
+            }
+          }],
+          order_application_context: {
+            brand_name: 'Bogota Band Parents',
+            shipping_preference: 'NO_SHIPPING'
+          }
+        });
+      },
+      onApprove: (data, actions) => {
+        // This function captures the funds from the transaction.
+        return actions.order.capture().then(() => {
+          this.user.paid = true;
+        });
+    }
+    }).render(this.$refs.paypalButtons);
   },
   validations: {
     user: {
@@ -279,6 +318,11 @@ export default {
       email: {
         required,
         email
+      },
+      paid: {
+        hasPaid(paid) {
+          return paid;
+        }
       },
       password: {
         required,
