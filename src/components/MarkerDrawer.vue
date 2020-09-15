@@ -5,6 +5,7 @@
     overlay
     no-swipe-open
     no-swipe-close
+    elevated
     :width="width"
     @input="$emit('input', $event)">
     <div
@@ -31,6 +32,7 @@
       style="height: 40%;"
       class="relative-position">
       <q-carousel
+        v-if="photos.length > 1 && !loading"
         v-model="slide"
         swipeable
         animated
@@ -45,11 +47,17 @@
           :name="index"
           :img-src="photo" />
       </q-carousel>
+      <div
+        v-if="photos.length < 1 && !loading"
+        class="row items-center justify-center full-height"
+        style="font-size: 16px; font-weight: 600;">
+        No Photos Found
+      </div>
       <Spinner
-        v-if="photos.length < 1"
+        v-if="loading"
         absolute />
     </div>
-    
+    <q-separator />
     <div class="q-pa-sm">
       {{ marker.message }}
     </div>
@@ -72,6 +80,10 @@ export default {
     },
     photos: {
       type: Array,
+      required: true
+    },
+    loading: {
+      type: Boolean,
       required: true
     }
   },

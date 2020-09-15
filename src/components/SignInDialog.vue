@@ -91,7 +91,7 @@ export default {
       try {
         await this.$fireauth.setPersistence(this.$fireauth.Auth.Persistence.SESSION);
         await this.$fireauth.signInWithEmailAndPassword(this.email, this.password);
-        this.$q.notify({message: 'Successfully signed in', color: 'positive'});
+        this.$q.notify({message: 'Successfully signed in', color: 'positive', icon: 'check_circle'});
         this.$refs.dialog.hide();
       } catch(error) {
         this.onSignInError(error);
@@ -99,7 +99,7 @@ export default {
       this.loading = false;
     },
     onSignInError(error) {
-      this.$q.notify({message: 'Error signing in', color: 'negative'});
+      this.$q.notify({message: 'Error signing in', color: 'negative', icon: 'error'});
       this.$refs.dialog.shake();
       if(error.code === 'auth/user-not-found') {
         this.emailError = true;

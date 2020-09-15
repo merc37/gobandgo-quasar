@@ -8,14 +8,9 @@
       </q-card-section>
       <q-card-section>
         <q-input
-          v-model="marker.message"
+          v-model="markers[0].message"
           label="What are you selling?"
           type="textarea" />
-        <!-- <div class="q-mt-sm">
-          <q-toggle
-            v-model="user.donating"
-            label="Donate Now?" />
-        </div> -->
         <div class="q-mt-sm relative-position">
           <file-uploader
             ref="fileUploader"
@@ -47,8 +42,9 @@
 
     <MarkerDrawer
       v-model="drawerOpen"
-      :marker="marker[0] || {}"
-      :photos="photoFiles.urls" />
+      :marker="markers[0] || {}"
+      :photos="photoFiles.urls"
+      :loading="photosLoading" />
 
     <Spinner v-if="markerLoading" />
   </q-page>
@@ -64,8 +60,8 @@ export default {
   components: {MarkerDrawer, Spinner, FileUploader},
   data() {
     return {
-      drawerOpen: false,
-      marker: [],
+      drawerOpen: true,
+      markers: [],
       photoFiles: {urls: [], files: []},
       markerLoading: false,
       photosLoading: false,
@@ -138,10 +134,10 @@ export default {
   async mounted() {
     this.markerLoading = true;
     const userKey = this.$fireauth.currentUser.uid;
-    const { id }  = (await this.$bind('marker', this.$firestore.collection('markers').where('userKey', '==', userKey)))[0];
+    await this.$bind('markers', this.$firestore.collection('markers').where('userKey', '==', userKey));
     this.markerLoading = false;
     this.photosLoading = true;
-    this.photoFiles = await this.getPhotos(id);
+    this.photoFiles = await this.getPhotos(this.markers[0].id);
     if(this.photoFiles.files.length > 0) this.initialFileAdd = true;
     this.$refs.fileUploader.addFiles(this.photoFiles.files);
     this.photosLoading = false;

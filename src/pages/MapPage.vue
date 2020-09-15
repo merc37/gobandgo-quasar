@@ -22,7 +22,8 @@
     <MarkerDrawer
       v-model="drawerOpen"
       :marker="clickedMarker"
-      :photos="markerPhotos" />
+      :photos="markerPhotos"
+      :loading="photosLoading" />
 
     <Spinner v-if="markersLoading" />
   </q-page>
@@ -42,23 +43,18 @@ export default {
       clickedMarker: {},
       markerPhotos: [],
       drawerOpen: false,
-      markersLoading: false
+      markersLoading: false,
+      photosLoading: false
     };
-  },
-  async mounted() {
-    this.markersLoading = true;
-    try {
-      await this.$bind('markers', this.$firestore.collection('markers').where('paid', '==', true));
-    } finally {
-      this.markersLoading = false;
-    }
   },
   methods: {
     async openDrawer(marker) {
       this.clickedMarker = marker;
       this.markerPhotos = [];
       this.drawerOpen = true;
+      this.photosLoading = true;
       this.markerPhotos = await this.getPhotoUrls(marker.id);
+      this.photosLoading = false;
     },
     async getPhotoUrls(markerId) {
       const fileList = (await this.$firestorage.ref(markerId).listAll()).items;
@@ -67,6 +63,11 @@ export default {
       });
       return await Promise.all(photos);
     }
+  },
+  async mounted() {
+    this.markersLoading = true;
+    await this.$bind('markers', this.$firestore.collection('markers').where('paid', '==', true));
+    this.markersLoading = false;
   }
 };
 </script>

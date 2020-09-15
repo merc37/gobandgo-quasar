@@ -86,7 +86,8 @@
           active-class="text-accent"
           class="text-primary"
           clickable
-          to="/edit">
+          to="/edit"
+          @click="leftDrawerOpen = !leftDrawerOpen">
           <q-item-section avatar>
             <q-icon name="edit" />
           </q-item-section>
@@ -101,7 +102,8 @@
           active-class="text-accent"
           class="text-primary"
           clickable
-          to="/admin">
+          to="/admin"
+          @click="leftDrawerOpen = !leftDrawerOpen">
           <q-item-section avatar>
             <q-icon name="supervisor_account" />
           </q-item-section>
@@ -156,7 +158,7 @@ export default {
       if(!this.$route.path.includes('map')) {
         this.$router.push({path: '/map'});
       }
-      this.$q.notify({message: 'Successfully signed out', color: 'positive'});
+      this.$q.notify({message: 'Successfully signed out', color: 'positive', icon: 'check_circle'});
     }
   },
   mounted() {
