@@ -66,7 +66,7 @@ export default {
   },
   async mounted() {
     this.markersLoading = true;
-    await this.$bind('markers', this.$firestore.collection('markers').where('paid', '==', true));
+    await this.$bind('markers', this.$firestore.collection('markers').where('paid', '==', true), {maxRefDepth: 0});
     this.markersLoading = false;
   }
 };
