@@ -290,8 +290,8 @@ export default {
               value: '10.00'
             }
           }],
-          order_application_context: {
-            brand_name: 'Bogota Band Parents',
+          application_context: {
+            brand_name: 'Go Band Go',
             shipping_preference: 'NO_SHIPPING'
           }
         });
