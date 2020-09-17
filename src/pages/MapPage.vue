@@ -25,6 +25,17 @@
       :photos="markerPhotos"
       :loading="photosLoading" />
 
+    <q-btn
+      class="absolute-bottom-left q-ml-md q-mb-md"
+      round
+      size="md"
+      color="primary"
+      text-color="accent"
+      icon="info_outline"
+      @click="showInfoModal = true" />
+
+    <InfoModal v-model="showInfoModal" />
+
     <Spinner v-if="markersLoading" />
   </q-page>
 </template>
@@ -32,10 +43,11 @@
 <script>
 import MarkerDrawer from '../components/MarkerDrawer';
 import Spinner from '../components/Spinner';
+import InfoModal from '../components/InfoModal';
 import ResizeMixin from '../mixins/ResizeMixin';
 
 export default {
-  components: {MarkerDrawer, Spinner},
+  components: {MarkerDrawer, Spinner, InfoModal},
   mixins: [ResizeMixin],
   data() {
     return {
@@ -44,7 +56,8 @@ export default {
       markerPhotos: [],
       drawerOpen: false,
       markersLoading: false,
-      photosLoading: false
+      photosLoading: false,
+      showInfoModal: false
     };
   },
   methods: {
