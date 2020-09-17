@@ -287,7 +287,7 @@ export default {
           purchase_units: [{
             amount: {
               currency_code: 'USD',
-              value: '10.00'
+              value: '15.00'
             }
           }],
           application_context: {
